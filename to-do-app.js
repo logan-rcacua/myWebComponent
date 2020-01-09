@@ -1,4 +1,5 @@
 const template = document.createElement('template');
+
 template.innerHTML = `
     <style>
         :host{
@@ -21,19 +22,38 @@ template.innerHTML = `
     <h1>To do</h1>
 
     <input type="text" placeholder="Add new to do"></input>
-    <button>?</button>
+    <button>&#10004;</button>
 
     <ul id="todos"></ul>
     `;
 
-    class TodoApp extends HTMLElement{
-        constructor(){
-            super();
-            this._shadowRoot = this.attachShadow( { 'mode': 'open'});
-            this._shadowRoot.appendChild( template.content.cloneNode(true) );
-            this.$todoList = this._shadowRoot.querySelector('ul');
-        }
+class TodoApp extends HTMLElement{
+    constructor(){
+        super();
+        this._shadowRoot = this.attachShadow( { 'mode': 'open'});
+        this._shadowRoot.appendChild( template.content.cloneNode(true) );
+        this.$todoList = this._shadowRoot.querySelector('ul');
     }
 
-    window.customElements.define('to-do-app', TodoApp);
+    _renderTodoList(){
+        this.$todoList.innerHTML = '';
+
+        this._todos.forEach( ( todo, index) => {
+            let $todoItem = document.createElement('div');
+            $todoItem.innerHTML = todo.text;
+            this.$todoList.appendChild( $todoItem );
+        });
+    }
+
+    set todos( value ){
+        this._todos = value;
+        this._renderTodoList();
+    }
+
+    get todos(){
+        return this._todos;
+    }
+}
+
+window.customElements.define('to-do-app', TodoApp);
 
